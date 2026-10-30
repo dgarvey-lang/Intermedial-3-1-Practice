@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>3-1 Intermediate Practice</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&family=STIX+Two+Text:wght@500&display=swap">
+<style>
+/* Layout: one worksheet sheet laid on graph paper; progress strip above it, help drawer inside it */
+:root{
+  --paper:#edf2f0; --grid-bg:#dfe8e5; --sheet:#ffffff; --ink:#1c2627; --muted:#566566;
+  --rule:#d3dfdb; --rule-strong:#a9bdb7;
+  --accent:#27408b; --accent-ink:#ffffff; --accent-soft:#e6ebf7;
+  --ok:#22704a; --ok-soft:#e1f2e8; --bad:#b3302a; --bad-soft:#fbe7e5; --help:#8f5c0f; --help-soft:#fbf0dc;
+  --line1:#1f63c6; --line2:#cc3b2b; --plot-bg:#ffffff; --plot-grid:#e1e8e6; --axis:#6c7c7d;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-math:"STIX Two Text", "Times New Roman", Georgia, serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#101715; --grid-bg:#16201d; --sheet:#18211f; --ink:#e3ebe8; --muted:#9aaba7;
+    --rule:#26332f; --rule-strong:#3a4d47;
+    --accent:#9fb2ff; --accent-ink:#0d1430; --accent-soft:#1f2747;
+    --ok:#62d093; --ok-soft:#14301f; --bad:#ff8a7e; --bad-soft:#3a1c1a; --help:#f0b860; --help-soft:#33270f;
+    --line1:#6aa6ff; --line2:#ff8070; --plot-bg:#131b19; --plot-grid:#24302d; --axis:#8a9c98;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101715; --grid-bg:#16201d; --sheet:#18211f; --ink:#e3ebe8; --muted:#9aaba7;
+  --rule:#26332f; --rule-strong:#3a4d47;
+  --accent:#9fb2ff; --accent-ink:#0d1430; --accent-soft:#1f2747;
+  --ok:#62d093; --ok-soft:#14301f; --bad:#ff8a7e; --bad-soft:#3a1c1a; --help:#f0b860; --help-soft:#33270f;
+  --line1:#6aa6ff; --line2:#ff8070; --plot-bg:#131b19; --plot-grid:#24302d; --axis:#8a9c98;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+body{
+  margin:0; color:var(--ink); background-color:var(--paper);
+  background-image:linear-gradient(var(--grid-bg) 1px, transparent 1px), linear-gradient(90deg, var(--grid-bg) 1px, transparent 1px);
+  background-size:26px 26px;
+  font-family:var(--f-body); font-size:17px; line-height:1.55;
+}
+.wrap{max-width:880px; margin:0 auto; padding-block:22px 64px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); display:flex; flex-direction:column; gap:18px}
+header.top{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:6px 16px}
+.eyebrow{font-size:.78rem; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); font-weight:700}
+h1{font-family:var(--f-display); font-weight:800; font-size:clamp(1.7rem, 4.5vw, 2.3rem); line-height:1.1; margin:2px 0 0; text-wrap:balance}
+h2{font-family:var(--f-display); font-weight:700; font-size:1.35rem; line-height:1.2; margin:0; text-wrap:balance}
+h3{font-family:var(--f-display); font-weight:700; font-size:1.08rem; margin:0}
+h4{margin:0 0 4px; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:var(--help)}
+p{margin:0}
+.who{font-size:.92rem; color:var(--muted)}
+.who b{color:var(--ink)}
+.sheet{background:var(--sheet); border:1px solid var(--rule-strong); border-radius:6px; padding:24px clamp(16px, 4vw, 34px); display:flex; flex-direction:column; gap:16px; box-shadow:0 1px 0 var(--rule), 0 10px 30px -18px rgba(20,40,40,.35)}
+.stack{display:flex; flex-direction:column; gap:12px}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+.btn{font:inherit; font-size:.95rem; font-weight:700; color:var(--ink); background:var(--sheet); border:2px solid var(--rule-strong); border-radius:6px; padding:8px 16px; cursor:pointer; min-height:42px}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn:focus-visible,.fld:focus-visible,a:focus-visible,canvas:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+.btn:disabled{opacity:.45; cursor:default}
+.btn.primary{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.btn.help{border-color:var(--help); color:var(--help)}
+.btn.armed{border-color:var(--bad); color:var(--bad)}
+.actions{display:flex; flex-wrap:wrap; gap:10px; align-items:center}
+.fld{font:inherit; color:var(--ink); background:var(--sheet); border:2px solid var(--rule-strong); border-radius:6px; padding:5px 9px; max-width:100%}
+input.num{width:7.5ch; text-align:center; font-family:var(--f-mono); font-size:.95rem}
+.fld.ok{border-color:var(--ok); background:var(--ok-soft)}
+.fld.bad{border-color:var(--bad); background:var(--bad-soft)}
+.fld.missing{border-style:dashed; border-color:var(--help)}
+label.inline{display:flex; flex-wrap:wrap; align-items:center; gap:8px}
+
+/* progress strip */
+.strip{display:grid; grid-template-columns:repeat(13, minmax(0,1fr)); gap:4px}
+.cell{height:30px; border-radius:4px; border:1px solid var(--rule-strong); background:var(--sheet); display:flex; align-items:center; justify-content:center; font-family:var(--f-mono); font-size:.78rem; color:var(--muted); font-variant-numeric:tabular-nums}
+.cell.own{background:var(--ok-soft); border-color:var(--ok); color:var(--ok)}
+.cell.helped{background:var(--help-soft); border-color:var(--help); color:var(--help)}
+.cell.cur{border:2px solid var(--accent); color:var(--accent); font-weight:700}
+.legend{display:flex; flex-wrap:wrap; gap:4px 16px; font-size:.82rem; color:var(--muted)}
+.legend i{display:inline-block; width:11px; height:11px; border-radius:3px; margin-right:5px; vertical-align:-1px; border:1px solid}
+.legend .l-own{background:var(--ok-soft); border-color:var(--ok)}
+.legend .l-help{background:var(--help-soft); border-color:var(--help)}
+
+/* problem */
+.qhead{display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px}
+.qnum{font-family:var(--f-display); font-weight:800; font-size:1.6rem; color:var(--accent)}
+.tag{font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:3px 9px; border-radius:20px; background:var(--help-soft); color:var(--help)}
+.directions{font-weight:700}
+.sys{font-family:var(--f-math); font-size:1.45rem; line-height:1.45; border-left:3px solid var(--ink); border-radius:10px 0 0 10px; padding:2px 0 2px 14px; align-self:flex-start}
+.mathy{font-family:var(--f-math); font-size:1.15rem; white-space:nowrap}
+fieldset.pt{border:1px solid var(--rule-strong); border-radius:6px; padding:10px 14px 14px; margin:0; display:flex; flex-direction:column; gap:10px; min-width:0}
+fieldset.pt legend{font-weight:700; padding:0 6px}
+.work{display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px}
+.work .mathy{min-width:9.5ch}
+.plotwrap{display:flex; flex-direction:column; gap:8px; max-width:440px}
+.plotbar{display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px; font-size:.85rem; color:var(--muted)}
+.plotbar .dot{display:inline-block; width:11px; height:11px; border-radius:50%; margin:0 5px 0 0; vertical-align:-1px}
+.plotbar .coord{font-family:var(--f-mono); color:var(--ink); font-weight:700}
+canvas.plot{width:100%; max-width:440px; aspect-ratio:1/1; display:block; border:2px solid var(--rule-strong); border-radius:6px; background:var(--plot-bg); cursor:crosshair; touch-action:manipulation}
+canvas.plot.small{max-width:320px; cursor:default}
+canvas.plot.ok{border-color:var(--ok)}
+canvas.plot.bad{border-color:var(--bad)}
+canvas.plot.missing{border-style:dashed; border-color:var(--help)}
+.step{font-weight:700; margin-top:4px}
+.desmos{display:inline-flex; align-items:center; gap:6px; font-weight:700; color:var(--accent)}
+.msg{min-height:1.5em; font-weight:700}
+.msg.good{color:var(--ok)} .msg.warn{color:var(--bad)} .msg.info{color:var(--help)}
+.helpbox{border:1px solid var(--help); background:var(--help-soft); border-radius:6px; padding:14px 18px; display:flex; flex-direction:column; gap:14px}
+.helpbox ol{margin:4px 0 0; padding-left:1.3em}
+.helpbox li{margin:3px 0}
+.helpbox p + p{margin-top:6px}
+.warnnote{font-size:.88rem; color:var(--help)}
+
+/* finish + teacher */
+.code{font-family:var(--f-mono); font-weight:700; font-size:clamp(1rem, 3.6vw, 1.35rem); letter-spacing:.04em; background:var(--accent-soft); color:var(--ink); border:2px dashed var(--accent); border-radius:6px; padding:14px 16px; word-break:break-all; user-select:all}
+.stats{display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:10px}
+.stat{border:1px solid var(--rule-strong); border-radius:6px; padding:10px 14px}
+.stat b{display:block; font-family:var(--f-display); font-size:1.6rem; line-height:1.1; font-variant-numeric:tabular-nums}
+.stat span{font-size:.85rem; color:var(--muted)}
+.tablewrap{overflow-x:auto; min-width:0}
+table.rt{border-collapse:collapse; width:100%; font-size:.92rem; font-variant-numeric:tabular-nums}
+.rt th,.rt td{padding:7px 10px; border-bottom:1px solid var(--rule); text-align:left; vertical-align:top}
+.rt th{font-size:.75rem; letter-spacing:.07em; text-transform:uppercase; color:var(--muted)}
+.pill{display:inline-block; padding:1px 9px; border-radius:20px; font-size:.82rem; font-weight:700; white-space:nowrap}
+.pill.own{background:var(--ok-soft); color:var(--ok)}
+.pill.rec{background:var(--accent-soft); color:var(--accent)}
+.pill.need{background:var(--bad-soft); color:var(--bad)}
+.pill.invalid{background:var(--bad-soft); color:var(--bad)}
+textarea.fld{width:100%; font-family:var(--f-mono); font-size:.88rem}
+.grid2{display:grid; grid-template-columns:repeat(auto-fit, minmax(230px, 1fr)); gap:12px}
+.grid2 label{display:flex; flex-direction:column; gap:4px; font-weight:700; font-size:.92rem}
+details summary{cursor:pointer; font-weight:700}
+.report{border-top:1px solid var(--rule-strong); padding-top:14px; display:flex; flex-direction:column; gap:12px}
+.foot{font-size:.85rem; color:var(--muted); text-align:center}
+.foot a{color:var(--accent)}
+.rules{margin:0; padding-left:1.2em; display:flex; flex-direction:column; gap:6px}
+@media (max-width:520px){ body{font-size:16px} .cell{height:26px; font-size:.7rem} .sys{font-size:1.25rem} }
+@media (prefers-reduced-motion: no-preference){ .btn{transition:border-color .15s} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">Intermediate Algebra · 3-1 Practice</div>
+      <h1>Solving Systems of Equations</h1>
+    </div>
+    <div class="who" id="who" hidden></div>
+  </header>
+
+  <!-- start -->
+  <section class="sheet" id="vStart" hidden>
+    <h2>Before you start</h2>
+    <ul class="rules">
+      <li>There are 13 problems, in the same order as the paper worksheet. Show your work in the boxes, then press <b>Check answer</b>.</li>
+      <li>Stuck? Press <b>Help</b>. The first press gives a hint. More presses give more help, up to the full solution.</li>
+      <li>If you use <b>More help</b> or the full solution, you will do a similar problem on your own before moving on.</li>
+      <li>At the end you get a <b>teacher code</b>. Turn it in with your name, spelled the same way you type it here.</li>
+    </ul>
+    <label class="grid2" style="grid-template-columns:1fr"><span style="display:flex;flex-direction:column;gap:4px;font-weight:700">Your first and last name
+      <input class="fld" id="nameIn" type="text" maxlength="40" autocomplete="name" placeholder="First Last" style="max-width:360px"></span></label>
+    <div class="actions"><button class="btn primary" id="startBtn">Start worksheet</button><span class="msg warn" id="startMsg" role="status"></span></div>
+  </section>
+
+  <!-- worksheet -->
+  <section id="vWork" class="stack" hidden>
+    <div class="stack" style="gap:6px">
+      <div class="strip" id="strip" aria-label="Progress through the 13 problems"></div>
+      <div class="legend"><span><i class="l-own"></i>Solved on your own</span><span><i class="l-help"></i>Needed extra help</span></div>
+    </div>
+    <article class="sheet" id="qSheet">
+      <div class="qhead"><span class="qnum" id="qNum"></span><span class="tag" id="qTag" hidden></span></div>
+      <p class="directions" id="qDir"></p>
+      <div class="stack" id="qBody"></div>
+      <div class="actions">
+        <button class="btn primary" id="checkBtn">Check answer</button>
+        <button class="btn help" id="helpBtn">Help</button>
+        <button class="btn primary" id="nextBtn" hidden></button>
+      </div>
+      <p class="warnnote" id="helpWarn" hidden>Heads up: using More help or the full solution means you will do a similar problem before moving on.</p>
+      <p class="msg" id="qMsg" role="status"></p>
+      <div class="helpbox" id="helpBox" hidden></div>
+    </article>
+  </section>
+
+  <!-- finished -->
+  <section class="sheet" id="vDone" hidden>
+    <h2 id="doneTitle">Worksheet complete</h2>
+    <div class="stats" id="doneStats"></div>
+    <div class="stack" style="gap:8px">
+      <h3>Your teacher code</h3>
+      <p class="muted small" id="codeFor"></p>
+      <div class="code" id="codeOut"></div>
+      <div class="actions"><button class="btn primary" id="copyBtn">Copy code</button><span class="msg good" id="copyMsg" role="status"></span></div>
+      <textarea class="fld" id="copyFallback" rows="2" readonly hidden></textarea>
+    </div>
+    <div class="actions" style="border-top:1px solid var(--rule);padding-top:16px">
+      <button class="btn" id="restartBtn">Restart worksheet</button>
+      <span class="muted small">Restarting erases your work on this device and starts a new attempt.</span>
+    </div>
+  </section>
+
+  <!-- teacher -->
+  <section class="sheet" id="vTeacher" hidden>
+    <h2>Teacher: read student codes</h2>
+    <p class="muted small">A code only opens with the student's name. Capital letters, spaces and punctuation in the name don't matter, but the spelling does.</p>
+    <div class="grid2">
+      <label for="tName">Student name<input class="fld" id="tName" type="text" autocomplete="off"></label>
+      <label for="tCode">Code<input class="fld" id="tCode" type="text" autocomplete="off" spellcheck="false" style="font-family:var(--f-mono)"></label>
+    </div>
+    <div class="actions"><button class="btn primary" id="tCheck">Check code</button></div>
+    <details id="tBatchWrap">
+      <summary>Check a whole class at once</summary>
+      <div class="stack" style="margin-top:10px">
+        <p class="muted small">Paste one student per line: the name, then the code. A comma or a tab between them works, so you can paste two columns straight from a spreadsheet or Google Form responses.</p>
+        <textarea class="fld" id="tBatch" rows="6" placeholder="Jane Doe, ABCDE-FGHJK-…"></textarea>
+        <div class="actions"><button class="btn primary" id="tBatchBtn">Check all</button></div>
+      </div>
+    </details>
+    <div id="tOut" class="stack"></div>
+    <div class="actions"><button class="btn" id="tBack">Back to the worksheet</button></div>
+  </section>
+
+  <p class="foot"><a href="#teacher" id="teacherLink">Teacher: read student codes</a></p>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- settings ---------- */
+var HELP_LIMIT = 2;      // help level that counts as "too much help" (2 = More help, 3 = full solution)
+var MAX_SIMILAR = 3;     // most similar problems a student does for one worksheet problem
+var STORE = 'ia31-practice-v1', ATTEMPTS = 'ia31-practice-attempts';
+var SALT = 'IA31-systems-graphing-v1';
+var ALPH = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+
+/* ---------- helpers ---------- */
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function fmt(n){ n = Math.round(n*1e6)/1e6; return n < 0 ? '−' + (-n) : String(n); }
+function norm(s){ return String(s).toLowerCase().replace(/[−–—]/g,'-').replace(/\s+/g,'').replace(/[()]/g,''); }
+function numOf(s){
+  s = norm(s); if(s === '') return NaN;
+  if(/^-?\d*\.?\d+$/.test(s)) return parseFloat(s);
+  var m = /^(-?\d+)\/(-?\d+)$/.exec(s); if(m && +m[2] !== 0) return (+m[1])/(+m[2]);
+  return NaN;
+}
+function near(sv, target, tol){ var v = numOf(sv); return !isNaN(v) && Math.abs(v - target) < (tol || 1e-9); }
+function pairText(p){ return '(' + fmt(p[0]) + ', ' + fmt(p[1]) + ')'; }
+function sat(p, e){ return e.a*p[0] + e.b*p[1] === e.c; }
+function term(c, v){ var a = Math.abs(c); return a === 1 ? '(' + v + ')' : a + '(' + v + ')'; }
+function expr(a, b, x, y){
+  var s = '';
+  [[a,x],[b,y]].forEach(function(p){
+    var c = p[0]; if(c === 0) return;
+    var body = term(c, fmt(p[1]));
+    if(s === '') s = (c < 0 ? '−' : '') + body; else s += (c < 0 ? ' − ' : ' + ') + body;
+  });
+  return s;
+}
+function gcd(a, b){ a = Math.abs(a); b = Math.abs(b); while(b){ var t = a % b; a = b; b = t; } return a || 1; }
+function prng(seed){ var a = seed >>> 0; return function(){ a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function hash(s){ var h = 0x811c9dc5; for(var i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); } return h >>> 0; }
+function lin(a, b){
+  var s = '';
+  if(a !== 0) s = a === 1 ? 'x' : a === -1 ? '−x' : fmt(a) + 'x';
+  if(b !== 0){
+    var by = Math.abs(b) === 1 ? 'y' : Math.abs(b) + 'y';
+    if(s === '') s = (b < 0 ? '−' : '') + by; else s += (b < 0 ? ' − ' : ' + ') + by;
+  }
+  return s;
+}
+function eqText(a, b, c, rev){ return rev ? fmt(c) + ' = ' + lin(a, b) : lin(a, b) + ' = ' + fmt(c); }
+function slopeTerm(p, q){
+  if(q === 1) return p === 1 ? 'x' : p === -1 ? '−x' : p === 0 ? '' : fmt(p) + 'x';
+  return (p < 0 ? '−' : '') + '(' + Math.abs(p) + '/' + q + ')x';
+}
+function slopeInt(p, q, b){
+  var st = slopeTerm(p, q), s = 'y = ';
+  if(!st) return s + fmt(b);
+  s += st; if(b > 0) s += ' + ' + b; else if(b < 0) s += ' − ' + (-b);
+  return s;
+}
+function fracStr(p, q){ return q === 1 ? fmt(p) : (p < 0 ? '−' : '') + Math.abs(p) + '/' + q; }
+function rhsText(ax, c){
+  var s = ''; if(ax !== 0) s = ax === 1 ? 'x' : ax === -1 ? '−x' : fmt(ax) + 'x';
+  if(c !== 0 || s === '') s = (s === '') ? fmt(c) : s + (c > 0 ? ' + ' : ' − ') + Math.abs(c);
+  return s;
+}
+function normName(s){ return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z]/g,''); }
+function load(k){ try{ var v = localStorage.getItem(k); return v ? JSON.parse(v) : null; }catch(e){ return null; } }
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+/* ---------- the worksheet ---------- */
+function E(a, b, c, t){ return {a:a, b:b, c:c, t:t}; }
+var TYPE_NAME = {one:'One solution', none:'No solution', inf:'Infinitely many solutions'};
+var P = [
+  {n:1, kind:'two', pts:[[10,6],[3,4]], eqs:[E(1,1,16,'x + y = 16'), E(-1,1,2,'y − x = 2')]},
+  {n:2, kind:'two', pts:[[10,6],[3,4]], eqs:[E(3,-1,5,'3x − y = 5'), E(1,2,11,'x + 2y = 11')]},
+  {n:3, kind:'one', pt:[3,-2], eqs:[E(1,7,25,'x + 7y = 25'), E(5,1,11,'5x + y = 11')]},
+  {n:4, kind:'one', pt:[0,6], eqs:[E(-2,-5,-30,'−2x − 5y = −30'), E(-4,4,24,'−4x + 4y = 24')]},
+  {n:5, kind:'graph', eqs:['2y − 2x = −14','9 = 7x + y'], lines:[{m:1,b:-7},{m:-7,b:9}], type:'one', sol:[2,-5],
+   forms:['2y − 2x = −14 → add 2x to both sides: 2y = 2x − 14 → divide every term by 2: <b>y = x − 7</b>',
+          '9 = 7x + y → subtract 7x from both sides: <b>y = −7x + 9</b>'],
+   fin:'The slopes are different (1 and −7), so the lines cross once. Set the right sides equal: x − 7 = −7x + 9, so 8x = 16 and x = 2. Then y = 2 − 7 = −5.'},
+  {n:6, kind:'graph', eqs:['2 = x − y','−8x − y = −7'], lines:[{m:1,b:-2},{m:-8,b:7}], type:'one', sol:[1,-1],
+   forms:['2 = x − y → add y to both sides: y + 2 = x → subtract 2: <b>y = x − 2</b>',
+          '−8x − y = −7 → add 8x to both sides: −y = 8x − 7 → divide every term by −1: <b>y = −8x + 7</b>'],
+   fin:'The slopes are different (1 and −8), so the lines cross once. Set the right sides equal: x − 2 = −8x + 7, so 9x = 9 and x = 1. Then y = 1 − 2 = −1.'},
+  {n:7, kind:'graph', eqs:['y = 5','2x − y = 1'], lines:[{m:0,b:5},{m:2,b:-1}], type:'one', sol:[3,5],
+   forms:['y = 5 is a horizontal line: slope <b>0</b>, y-intercept <b>5</b>.',
+          '2x − y = 1 → subtract 2x from both sides: −y = −2x + 1 → divide every term by −1: <b>y = 2x − 1</b>'],
+   fin:'The slopes are different (0 and 2), so the lines cross once. Put y = 5 into y = 2x − 1: 5 = 2x − 1, so 2x = 6 and x = 3.'},
+  {n:8, kind:'graph', eqs:['y = 3x − 2','15x − 5y = 10'], lines:[{m:3,b:-2},{m:3,b:-2}], type:'inf',
+   forms:['y = 3x − 2 is already in slope-intercept form: slope <b>3</b>, y-intercept <b>−2</b>.',
+          '15x − 5y = 10 → subtract 15x from both sides: −5y = −15x + 10 → divide every term by −5: <b>y = 3x − 2</b>'],
+   fin:'Both equations are the same line, so every point on the line is a solution: infinitely many solutions.'},
+  {n:9, kind:'graph', eqs:['x − 2y = −6','y = (1/2)x − 8'], lines:[{m:0.5,b:3},{m:0.5,b:-8}], type:'none',
+   forms:['x − 2y = −6 → subtract x from both sides: −2y = −x − 6 → divide every term by −2: <b>y = (1/2)x + 3</b>',
+          'y = (1/2)x − 8 is already in slope-intercept form: slope <b>1/2</b>, y-intercept <b>−8</b>.'],
+   fin:'Same slope (1/2) but different y-intercepts (3 and −8). The lines are parallel and never meet, so there is no solution.'},
+  {n:10, kind:'graph', eqs:['3x − 5y = 20','y = 10x − 4'], lines:[{m:0.6,b:-4},{m:10,b:-4}], type:'one', sol:[0,-4],
+   forms:['3x − 5y = 20 → subtract 3x from both sides: −5y = −3x + 20 → divide every term by −5: <b>y = (3/5)x − 4</b>',
+          'y = 10x − 4 is already in slope-intercept form: slope <b>10</b>, y-intercept <b>−4</b>.'],
+   fin:'The slopes are different (3/5 and 10), so the lines cross once. Both lines have y-intercept −4, so they cross on the y-axis at (0, −4).'},
+  {n:11, kind:'desmos', eqs:['y = (1/4)x + 1','y = (5/4)x − 3'], lines:[{m:0.25,b:1},{m:1.25,b:-3}], type:'one', sol:[4,2],
+   forms:['y = (1/4)x + 1: slope <b>1/4</b>, y-intercept <b>1</b>.','y = (5/4)x − 3: slope <b>5/4</b>, y-intercept <b>−3</b>.'],
+   fin:'The slopes are different, so the lines cross once. Set the right sides equal: (1/4)x + 1 = (5/4)x − 3, so 4 = x. Then y = (1/4)(4) + 1 = 2.'},
+  {n:12, kind:'desmos', eqs:['x − 4y = −4','y = (1/4)x − 2'], lines:[{m:0.25,b:1},{m:0.25,b:-2}], type:'none',
+   forms:['x − 4y = −4 → subtract x from both sides: −4y = −x − 4 → divide every term by −4: <b>y = (1/4)x + 1</b>',
+          'y = (1/4)x − 2: slope <b>1/4</b>, y-intercept <b>−2</b>.'],
+   fin:'Same slope (1/4) but different y-intercepts (1 and −2). The lines are parallel, so there is no solution.'},
+  {n:13, kind:'desmos', eqs:['y = (1/3)x + 3','4x − 12y = −36'], lines:[{m:1/3,b:3},{m:1/3,b:3}], type:'inf',
+   forms:['y = (1/3)x + 3: slope <b>1/3</b>, y-intercept <b>3</b>.',
+          '4x − 12y = −36 → subtract 4x from both sides: −12y = −4x − 36 → divide every term by −12: <b>y = (1/3)x + 3</b>'],
+   fin:'Both equations are the same line, so there are infinitely many solutions.'}
+];
+var DIRECTIONS = {
+  two: 'Determine if the ordered pairs (10, 6) and (3, 4) are solutions to the system of linear equations. Show work to justify your answer.',
+  one: 'Determine if the ordered pair given is a solution to the system of equations. Show work to justify your answer.',
+  graph: 'Solve by graphing. Show work if an equation is not in slope-intercept form. List the answer as an ordered pair when there is one solution.',
+  desmos: 'Use Desmos to graph the system and determine the solution. If there is one solution, write your answer as an ordered pair.'
+};
+
+/* ---------- similar problems ---------- */
+function siMeta(p, q, b){ return {form:'si', text:slopeInt(p, q, b), sp:p, sq:q, sb:b}; }
+function stdMeta(p, q, b, k, rev){
+  var a = k*p, bb = -k*q, c = -k*q*b;
+  return {form:'std', text:eqText(a, bb, c, rev), a:a, b:bb, c:c, sp:p, sq:q, sb:b};
+}
+function formOf(m){
+  if(m.form === 'si') return m.text + ' is already in slope-intercept form: slope <b>' + fracStr(m.sp, m.sq) + '</b>, y-intercept <b>' + fmt(m.sb) + '</b>.';
+  var div = (m.b === 1) ? '' : ' → divide every term by ' + fmt(m.b);
+  return m.text + ' → move the x-term to the right side: ' + lin(0, m.b) + ' = ' + rhsText(-m.a, m.c) + div + ': <b>' + slopeInt(m.sp, m.sq, m.sb) + '</b>';
+}
+function okLine(p, q, b){ return q <= 10 && Math.abs(b) <= 10 && Math.abs(b + p) <= 10; }
+function finishGraph(n, metas, type, sol){
+  var m1 = metas[0], m2 = metas[1], fin;
+  if(type === 'one') fin = 'The slopes are different (' + fracStr(m1.sp, m1.sq) + ' and ' + fracStr(m2.sp, m2.sq) + '), so the lines cross once. Set the right sides equal: ' + slopeInt(m1.sp, m1.sq, m1.sb).slice(4) + ' = ' + slopeInt(m2.sp, m2.sq, m2.sb).slice(4) + '. Solving gives x = ' + fmt(sol[0]) + ', and then y = ' + fmt(sol[1]) + '.';
+  else if(type === 'none') fin = 'Same slope (' + fracStr(m1.sp, m1.sq) + ') but different y-intercepts (' + fmt(m1.sb) + ' and ' + fmt(m2.sb) + '). The lines are parallel and never meet, so there is no solution.';
+  else fin = 'Both equations simplify to ' + slopeInt(m1.sp, m1.sq, m1.sb) + ', the same line, so there are infinitely many solutions.';
+  return {n:n, kind: n >= 11 ? 'desmos' : 'graph', variant:true, eqs:metas.map(function(m){ return m.text; }),
+    lines:metas.map(function(m){ return {m:m.sp/m.sq, b:m.sb}; }), type:type, sol:sol, forms:metas.map(formOf), fin:fin};
+}
+function makeVariant(n, seed){
+  var o = P[n-1], rnd = prng(seed), t;
+  function ri(a, b){ return a + Math.floor(rnd()*(b - a + 1)); }
+  function pk(arr){ return arr[Math.floor(rnd()*arr.length)]; }
+  function nz(a, b){ var v; do{ v = ri(a, b); }while(v === 0); return v; }
+  if(o.kind === 'two' || o.kind === 'one'){
+    for(t = 0; t < 400; t++){
+      var S = [ri(-6, 8), ri(-6, 8)];
+      var eqs = [0,1].map(function(){ var a = nz(-5, 5), b = nz(-5, 5); return {a:a, b:b, c:a*S[0] + b*S[1]}; });
+      if(eqs[0].a*eqs[1].b - eqs[1].a*eqs[0].b === 0) continue;
+      if(Math.abs(eqs[0].c) > 45 || Math.abs(eqs[1].c) > 45) continue;
+      eqs.forEach(function(e){ e.t = eqText(e.a, e.b, e.c, false); });
+      var onOne = function(k){
+        var e = eqs[k], g = gcd(e.a, e.b), dx = e.b/g, dy = -e.a/g, ss = [1,-1,2,-2];
+        for(var i = 0; i < ss.length; i++){ var p = [S[0] + ss[i]*dx, S[1] + ss[i]*dy]; if(Math.abs(p[0]) <= 12 && Math.abs(p[1]) <= 12) return p; }
+        return null;
+      };
+      var offBoth = function(){ for(var u = 0; u < 60; u++){ var p = [ri(-6, 10), ri(-6, 10)]; if(!sat(p, eqs[0]) && !sat(p, eqs[1])) return p; } return null; };
+      var wrongPt = function(){ return rnd() < 0.6 ? onOne(ri(0, 1)) : offBoth(); };
+      if(o.kind === 'one'){
+        var pt = rnd() < 0.5 ? S : wrongPt(); if(!pt) continue;
+        return {n:n, kind:'one', variant:true, pt:pt, eqs:eqs};
+      }
+      var out = pk(['none','A','B']), A, B;
+      if(out === 'none'){ A = onOne(0); B = rnd() < 0.5 ? onOne(1) : offBoth(); }
+      else { var w = wrongPt(); if(out === 'A'){ A = S; B = w; } else { A = w; B = S; } }
+      if(!A || !B || (A[0] === B[0] && A[1] === B[1])) continue;
+      return {n:n, kind:'two', variant:true, pts:[A, B], eqs:eqs};
+    }
+    return null;
+  }
+  var sx, sy, m1, m2, b1, b2, p, q, b, k, p1, p2, tt, metas;
+  for(t = 0; t < 800; t++){
+    if(n === 5 || n === 6 || n === 7){
+      sx = ri(-5, 5); sy = ri(-8, 8);
+      if(n === 7){ m1 = 0; m2 = nz(-5, 5); } else { m1 = nz(-5, 5); m2 = nz(-5, 5); if(m1 === m2) continue; }
+      b1 = sy - m1*sx; b2 = sy - m2*sx;
+      if(!okLine(m1, 1, b1) || !okLine(m2, 1, b2)) continue;
+      if(n === 5) metas = [stdMeta(m1, 1, b1, pk([-2,-3]), false), stdMeta(m2, 1, b2, -1, true)];
+      else if(n === 6) metas = [stdMeta(m1, 1, b1, 1, true), stdMeta(m2, 1, b2, pk([1,2]), false)];
+      else metas = [siMeta(0, 1, b1), stdMeta(m2, 1, b2, pk([1,-1]), false)];
+      return finishGraph(n, metas, 'one', [sx, sy]);
+    }
+    if(n === 10){
+      q = pk([2,3,4,5]); p = nz(-7, 7); if(gcd(p, q) !== 1) continue;
+      b = nz(-8, 8); k = nz(-6, 6); if(k*q === p) continue;
+      if(!okLine(p, q, b) || !okLine(k, 1, b)) continue;
+      return finishGraph(n, [stdMeta(p, q, b, pk([1,-1]), false), siMeta(k, 1, b)], 'one', [0, b]);
+    }
+    if(n === 11){
+      q = pk([2,3,4]); p1 = nz(-7, 7); p2 = nz(-7, 7);
+      if(p1 === p2 || gcd(p1, q) !== 1 || gcd(p2, q) !== 1) continue;
+      tt = pk([-2,-1,1,2]); sx = q*tt; sy = ri(-6, 6); b1 = sy - p1*tt; b2 = sy - p2*tt;
+      if(!okLine(p1, q, b1) || !okLine(p2, q, b2)) continue;
+      return finishGraph(n, [siMeta(p1, q, b1), siMeta(p2, q, b2)], 'one', [sx, sy]);
+    }
+    if(n === 9 || n === 12){
+      q = n === 9 ? pk([2,3]) : pk([3,4,5]); p = nz(-5, 5); if(gcd(p, q) !== 1) continue;
+      b1 = ri(-8, 8); b2 = ri(-8, 8); if(b1 === b2) continue;
+      if(!okLine(p, q, b1) || !okLine(p, q, b2)) continue;
+      return finishGraph(n, [stdMeta(p, q, b1, 1, false), siMeta(p, q, b2)], 'none', null);
+    }
+    if(n === 8){
+      m1 = nz(-4, 4); b = nz(-8, 8); if(!okLine(m1, 1, b)) continue;
+      return finishGraph(n, [siMeta(m1, 1, b), stdMeta(m1, 1, b, pk([2,3,4,5,-2,-3]), false)], 'inf', null);
+    }
+    if(n === 13){
+      q = pk([2,3,4]); p = nz(-5, 5); if(gcd(p, q) !== 1) continue;
+      b = nz(-8, 8); if(!okLine(p, q, b)) continue;
+      return finishGraph(n, [siMeta(p, q, b), stdMeta(p, q, b, pk([2,3,4,-2,-3]), false)], 'inf', null);
+    }
+  }
+  return null;
+}
+var VCACHE = {};
+function variantFor(n, seed){ var key = n + '~' + seed; if(!VCACHE[key]) VCACHE[key] = makeVariant(n, seed); return VCACHE[key]; }
+
+/* ---------- state ---------- */
+var S = null, pts = [];
+function freshRec(){ return {w:0, h:0, solved:false, sc:0, sw:0, sok:false, sh:0}; }
+function persist(){ if(S) save(STORE, S); }
+function curQ(){ return S.sim ? variantFor(S.i + 1, S.sim) : P[S.i]; }
+function rec(){ return S.rec[S.i]; }
+
+/* ---------- views ---------- */
+var VIEWS = ['vStart','vWork','vDone','vTeacher'];
+function show(v){
+  VIEWS.forEach(function(id){ $(id).hidden = (id !== v); });
+  $('teacherLink').hidden = (v === 'vTeacher');
+  var who = $('who');
+  if(S && S.name && v !== 'vTeacher' && v !== 'vStart'){ who.hidden = false; who.innerHTML = 'Working as <b>' + esc(S.name) + '</b>'; }
+  else who.hidden = true;
+}
+function route(){
+  if(location.hash === '#teacher'){ show('vTeacher'); return; }
+  if(!S){ show('vStart'); return; }
+  if(S.finishedAt){ renderDone(); show('vDone'); return; }
+  show('vWork'); renderItem();
+}
+
+/* ---------- start ---------- */
+$('startBtn').onclick = function(){
+  var name = $('nameIn').value.replace(/[\u0000-\u001f]/g,'').replace(/\s+/g,' ').trim();
+  if(normName(name).length < 2 || name.indexOf(' ') < 0){ $('startMsg').textContent = 'Type your first and last name.'; return; }
+  var attempt = (load(ATTEMPTS) || 0) + 1; save(ATTEMPTS, attempt);
+  S = {name:name, rec:P.map(freshRec), i:0, sim:null, h:0, phase:'ask', msg:null, startedAt:Date.now(), finishedAt:null, attempt:attempt};
+  persist(); pts = []; show('vWork'); renderItem(); window.scrollTo(0, 0);
+};
+$('nameIn').addEventListener('keydown', function(e){ if(e.key === 'Enter') $('startBtn').click(); });
+
+/* ---------- rendering a problem ---------- */
+function inp(name, ph, label){ return '<input class="fld num" type="text" inputmode="text" id="f-' + name + '" data-f="' + name + '" autocomplete="off" autocapitalize="off" spellcheck="false"' + (ph ? ' placeholder="' + ph + '"' : '') + ' aria-label="' + esc(label || name) + '">'; }
+function sysHtml(list){ return '<div class="sys">' + list.map(function(t){ return '<div>' + t + '</div>'; }).join('') + '</div>'; }
+function workRow(e, name){
+  return '<div class="work"><span class="mathy">' + e.t + '</span><span>left side =</span>' + inp(name, '', 'Left side of ' + e.t) +
+    '<span class="muted small">compare with ' + fmt(e.c) + '</span></div>';
+}
+function typeRow(){
+  return '<label class="inline" for="f-type">How many solutions? <select class="fld" id="f-type" data-f="type"><option value="">Choose…</option><option value="one">One solution</option><option value="none">No solution</option><option value="inf">Infinitely many solutions</option></select></label>' +
+    '<label class="inline" for="f-sol">If there is one solution, write it as an ordered pair: ' + inp('sol', '(x, y)', 'Ordered pair solution').replace('class="fld num"', 'class="fld num" style="width:11ch"') + '</label>';
+}
+function bodyHtml(q){
+  var h = '';
+  if(q.kind === 'two'){
+    h += sysHtml(q.eqs.map(function(e){ return e.t; }));
+    h += '<p>Substitute each point into both equations. Type the value of the <b>left side</b> of each equation.</p>';
+    q.pts.forEach(function(p, k){
+      h += '<fieldset class="pt"><legend>Check ' + pairText(p) + '</legend>' + q.eqs.map(function(e, i){ return workRow(e, 'v' + k + i); }).join('') + '</fieldset>';
+    });
+    h += '<label class="inline" for="f-final">Which ordered pairs are solutions? <select class="fld" id="f-final" data-f="final"><option value="">Choose…</option><option value="none">Neither pair</option><option value="A">Only ' + pairText(q.pts[0]) + '</option><option value="B">Only ' + pairText(q.pts[1]) + '</option><option value="both">Both pairs</option></select></label>';
+  } else if(q.kind === 'one'){
+    h += '<p class="mathy" style="font-size:1.3rem">' + pairText(q.pt) + '</p>' + sysHtml(q.eqs.map(function(e){ return e.t; }));
+    h += '<p>Substitute x = ' + fmt(q.pt[0]) + ' and y = ' + fmt(q.pt[1]) + '. Type the value of the <b>left side</b> of each equation.</p>';
+    h += '<fieldset class="pt"><legend>Check ' + pairText(q.pt) + '</legend>' + q.eqs.map(function(e, i){ return workRow(e, 'v' + i); }).join('') + '</fieldset>';
+    h += '<label class="inline" for="f-final">Is ' + pairText(q.pt) + ' a solution of the system? <select class="fld" id="f-final" data-f="final"><option value="">Choose…</option><option value="yes">Yes</option><option value="no">No</option></select></label>';
+  } else if(q.kind === 'graph'){
+    h += sysHtml(q.eqs);
+    h += '<p class="step">Step 1: Show your work. Write each equation in slope-intercept form, y = mx + b.</p><p class="muted small">Type fractions like 1/2 or decimals like 0.5.</p>';
+    q.eqs.forEach(function(t, i){
+      h += '<div class="work"><span class="mathy">' + t + '</span><span>→ y =</span>' + inp('m' + i, 'm', 'Slope of equation ' + (i+1)) + '<span>x +</span>' + inp('b' + i, 'b', 'y-intercept of equation ' + (i+1)) + '</div>';
+    });
+    h += '<p class="step">Step 2: Graph both lines.</p><p class="muted small">Click two points on the first line (blue), then two points on the second line (red).</p>';
+    h += '<div class="plotwrap"><div class="plotbar"><span><i class="dot" style="background:var(--line1)"></i>' + q.eqs[0] + ' &nbsp; <i class="dot" style="background:var(--line2)"></i>' + q.eqs[1] + '</span><span class="coord" id="gcoord"></span></div>' +
+      '<canvas class="plot" id="gcanvas" tabindex="0" aria-label="Coordinate grid from −10 to 10. Click to place points for each line."></canvas>' +
+      '<div class="actions"><button class="btn" id="gundo" type="button">Undo point</button><button class="btn" id="gclear" type="button">Clear graph</button></div></div>';
+    h += '<p class="step">Step 3: Answer.</p>' + typeRow();
+  } else {
+    h += sysHtml(q.eqs);
+    h += '<p><a class="desmos" href="https://www.desmos.com/calculator" target="_blank" rel="noopener">Open Desmos in a new tab ↗</a></p>';
+    h += '<p class="muted small">Type both equations into Desmos. Click where the lines cross to see the point.</p>';
+    h += typeRow();
+  }
+  return h;
+}
+function renderStrip(){
+  var s = $('strip'); s.textContent = '';
+  P.forEach(function(_, i){
+    var c = document.createElement('div'), r = S.rec[i], cls = 'cell';
+    if(i < S.i || S.finishedAt) cls += (r.solved && r.h < HELP_LIMIT) ? ' own' : ' helped';
+    if(i === S.i && !S.finishedAt) cls += ' cur';
+    c.className = cls; c.textContent = i + 1; s.appendChild(c);
+  });
+}
+function renderItem(){
+  var q = curQ(), r = rec();
+  renderStrip();
+  $('qNum').textContent = S.sim ? 'Similar to #' + q.n : 'Problem ' + q.n;
+  var tag = $('qTag');
+  if(S.sim){ tag.hidden = false; tag.textContent = 'Practice ' + r.sc + ' of up to ' + MAX_SIMILAR; } else tag.hidden = true;
+  $('qDir').textContent = (q.kind === 'two' && q.variant) ? 'Determine if the ordered pairs ' + pairText(q.pts[0]) + ' and ' + pairText(q.pts[1]) + ' are solutions to the system of linear equations. Show work to justify your answer.' : DIRECTIONS[q.kind];
+  $('qBody').innerHTML = bodyHtml(q);
+  if(q.kind === 'graph') bindGraph();
+  renderHelp();
+  renderControls();
+}
+function renderControls(){
+  var done = S.phase === 'done';
+  $('checkBtn').disabled = done;
+  $('helpBtn').disabled = done || S.h >= 3;
+  $('helpBtn').textContent = ['Help', 'More help', 'Show full solution', 'Full solution shown'][S.h];
+  $('helpWarn').hidden = !(S.h === 1 && !done);
+  var nb = $('nextBtn');
+  if(done){
+    var step = nextStep();
+    nb.hidden = false;
+    nb.textContent = step === 'similar' ? (S.sim ? 'Try another similar problem →' : 'Try a similar problem →') : (S.i === P.length - 1 ? 'Finish worksheet →' : 'Next problem →');
+  } else nb.hidden = true;
+  var m = $('qMsg');
+  m.textContent = S.msg ? S.msg.text : ''; m.className = 'msg' + (S.msg && S.msg.cls ? ' ' + S.msg.cls : '');
+  if(done) $('qBody').querySelectorAll('input,select,button').forEach(function(el){ el.disabled = true; });
+}
+function nextStep(){
+  var r = rec();
+  if(!S.sim) return r.h >= HELP_LIMIT ? 'similar' : 'next';
+  if(r.sok) return 'next';
+  return r.sc < MAX_SIMILAR ? 'similar' : 'next';
+}
+function say(text, cls){ S.msg = text ? {text:text, cls:cls || ''} : null; }
+
+/* ---------- help ---------- */
+function formsList(q){ return '<ol>' + q.forms.map(function(f){ return '<li>' + f + '</li>'; }).join('') + '</ol>'; }
+function pairSolution(q){
+  var list = q.kind === 'two' ? q.pts : [q.pt], h = '';
+  list.forEach(function(p){
+    h += '<p><b>Check ' + pairText(p) + ':</b></p><ol>';
+    q.eqs.forEach(function(e){
+      var v = e.a*p[0] + e.b*p[1];
+      h += '<li>' + e.t + ' → ' + expr(e.a, e.b, p[0], p[1]) + ' = <b>' + fmt(v) + '</b>. Compare with ' + fmt(e.c) + ': <b>' + (v === e.c ? 'true' : 'false') + '</b></li>';
+    });
+    var ok = q.eqs.every(function(e){ return sat(p, e); });
+    h += '</ol><p>' + (ok ? 'Both equations are true, so ' + pairText(p) + ' <b>is</b> a solution.' : 'At least one equation is false, so ' + pairText(p) + ' is <b>not</b> a solution.') + '</p>';
+  });
+  return h;
+}
+function hint1(q){
+  if(q.kind === 'two' || q.kind === 'one') return '<p>Replace x and y with the numbers from the ordered pair, do the arithmetic, and compare the result with the right side of that equation. A point is a solution only if it makes <b>both</b> equations true.</p>';
+  if(q.kind === 'graph') return '<p>Get y by itself in each equation so it looks like y = mx + b. Whatever you do to one side, do to the other side. Then plot the y-intercept b on the y-axis and use the slope m (rise over run) to find a second point.</p>';
+  return '<p>Type each equation into Desmos exactly as written. If the lines cross once, click the crossing point to see its coordinates. If they never meet, there is no solution. If one line sits right on top of the other, there are infinitely many solutions.</p>';
+}
+function hint2(q){
+  if(q.kind === 'two' || q.kind === 'one'){
+    var p = q.kind === 'two' ? q.pts[0] : q.pt, e = q.eqs[0], v = e.a*p[0] + e.b*p[1];
+    return '<p>Here is the first one done for you. Put ' + pairText(p) + ' into ' + e.t + ': ' + expr(e.a, e.b, p[0], p[1]) + ' = ' + fmt(v) + '. ' +
+      (v === e.c ? 'That equals ' + fmt(e.c) + ', so this equation is true.' : 'That is not ' + fmt(e.c) + ', so this equation is false, which means ' + pairText(p) + ' is not a solution.') +
+      '</p><p>Now do the same thing for the rest.</p>';
+  }
+  return '<p>Here is each equation in slope-intercept form:</p>' + formsList(q) +
+    '<p>Now compare the lines. <b>Different slopes</b>: one solution where they cross. <b>Same slope, different y-intercepts</b>: no solution. <b>Same slope and same y-intercept</b>: infinitely many solutions.</p>';
+}
+function solutionHtml(q){
+  if(q.kind === 'two' || q.kind === 'one'){
+    var h = pairSolution(q);
+    if(q.kind === 'two'){
+      var v = q.pts.map(function(p){ return q.eqs.every(function(e){ return sat(p, e); }); });
+      h += '<p>Answer: <b>' + (v[0] && v[1] ? 'both pairs' : v[0] ? 'only ' + pairText(q.pts[0]) : v[1] ? 'only ' + pairText(q.pts[1]) : 'neither pair') + '</b>.</p>';
+    }
+    return h;
+  }
+  var ans = q.type === 'one' ? 'one solution, <b>' + pairText(q.sol) + '</b>' : '<b>' + TYPE_NAME[q.type].toLowerCase() + '</b>';
+  return '<ol>' + q.forms.map(function(f){ return '<li>' + f + '</li>'; }).join('') + '<li>' + q.fin + '</li></ol><p>Answer: ' + ans + '.</p><canvas class="plot small" id="hcanvas" aria-label="Graph of both lines"></canvas>';
+}
+function renderHelp(){
+  var q = curQ(), box = $('helpBox'), h = '';
+  if(S.h >= 1) h += '<section><h4>Hint</h4>' + hint1(q) + '</section>';
+  if(S.h >= 2) h += '<section><h4>More help</h4>' + hint2(q) + '</section>';
+  if(S.h >= 3) h += '<section><h4>Full solution</h4>' + solutionHtml(q) + '</section>';
+  box.innerHTML = h; box.hidden = !h;
+  if(S.h >= 3 && q.lines) requestAnimationFrame(function(){ drawBoard($('hcanvas'), q, {answer:true}); });
+}
+$('helpBtn').onclick = function(){
+  if(S.phase !== 'ask' || S.h >= 3) return;
+  var r = rec();
+  S.h++;
+  if(S.sim) r.sh = Math.max(r.sh, S.h); else r.h = Math.max(r.h, S.h);
+  if(S.h >= 3){
+    S.phase = 'done';
+    var step = nextStep();
+    say(step === 'similar' ? 'Read through the solution, then try a similar problem on your own.' : 'Read through the solution. Then move on. Your teacher will see that this one needed extra help.', 'info');
+  } else say('', '');
+  persist(); renderHelp(); renderControls();
+  $('helpBox').scrollIntoView({block:'nearest', behavior:'smooth'});
+};
+
+/* ---------- graphing ---------- */
+function drawBoard(cv, q, o){
+  if(!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d'); if(!ctx) return;
+  var size = cv.clientWidth || 300, dpr = window.devicePixelRatio || 1;
+  cv.width = cv.height = Math.round(size*dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  var L = 11, sc = size/(2*L);
+  function X(x){ return (x + L)*sc; } function Y(y){ return (L - y)*sc; }
+  var cs = getComputedStyle(document.documentElement);
+  function css(n){ return cs.getPropertyValue(n).trim(); }
+  ctx.clearRect(0, 0, size, size);
+  ctx.lineWidth = 1; ctx.strokeStyle = css('--plot-grid');
+  for(var i = -10; i <= 10; i++){
+    ctx.beginPath(); ctx.moveTo(X(i), Y(-10.5)); ctx.lineTo(X(i), Y(10.5)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X(-10.5), Y(i)); ctx.lineTo(X(10.5), Y(i)); ctx.stroke();
+  }
+  ctx.strokeStyle = css('--axis'); ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(X(0), 0); ctx.lineTo(X(0), size); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, Y(0)); ctx.lineTo(size, Y(0)); ctx.stroke();
+  ctx.fillStyle = css('--axis'); ctx.font = Math.max(9, size/36) + 'px sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  for(var t = -10; t <= 10; t += 2){ if(t !== 0) ctx.fillText(String(t).replace('-', '−'), X(t), Y(0) + 3); }
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  for(var u = -10; u <= 10; u += 2){ if(u !== 0) ctx.fillText(String(u).replace('-', '−'), X(0) - 4, Y(u)); }
+  function seg(ln, color, w, dash){
+    ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []);
+    ctx.beginPath(); ctx.moveTo(X(-L), Y(ln.m*-L + ln.b)); ctx.lineTo(X(L), Y(ln.m*L + ln.b)); ctx.stroke(); ctx.setLineDash([]);
+  }
+  var same = Math.abs(q.lines[0].m - q.lines[1].m) < 1e-9 && Math.abs(q.lines[0].b - q.lines[1].b) < 1e-9;
+  if(o.answer){
+    seg(q.lines[0], css('--line1'), same ? 6 : 3);
+    seg(q.lines[1], css('--line2'), same ? 2 : 3, same ? [7,6] : null);
+  }
+  var Pt = o.pts || [];
+  function pseg(p1, p2, color){
+    ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.beginPath();
+    if(p1[0] === p2[0]){ ctx.moveTo(X(p1[0]), Y(-L)); ctx.lineTo(X(p1[0]), Y(L)); }
+    else { var m = (p2[1] - p1[1])/(p2[0] - p1[0]); ctx.moveTo(X(-L), Y(p1[1] + m*(-L - p1[0]))); ctx.lineTo(X(L), Y(p1[1] + m*(L - p1[0]))); }
+    ctx.stroke();
+  }
+  if(Pt.length >= 2) pseg(Pt[0], Pt[1], css('--line1'));
+  if(Pt.length >= 4) pseg(Pt[2], Pt[3], css('--line2'));
+  ctx.font = 'bold ' + Math.max(10, size/32) + 'px sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  Pt.forEach(function(pt, i){
+    ctx.fillStyle = i < 2 ? css('--line1') : css('--line2'); ctx.beginPath(); ctx.arc(X(pt[0]), Y(pt[1]), 6, 0, 6.2832); ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = css('--plot-bg'); ctx.stroke();
+    ctx.fillStyle = css('--ink'); ctx.fillText(pairText(pt), X(pt[0]) + 9, Y(pt[1]) - 6);
+  });
+  if(o.answer && q.type === 'one'){
+    ctx.strokeStyle = css('--ok'); ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(X(q.sol[0]), Y(q.sol[1]), 9, 0, 6.2832); ctx.stroke();
+    ctx.fillStyle = css('--ink'); ctx.font = 'bold ' + Math.max(10, size/30) + 'px sans-serif';
+    ctx.fillText(pairText(q.sol), X(q.sol[0]) + 12, Y(q.sol[1]) - 6);
+  }
+}
+function lineFrom(a, b){ if(a[0] === b[0]) return null; var m = (b[1] - a[1])/(b[0] - a[0]); return {m:m, b:a[1] - m*a[0]}; }
+function redrawInput(){ var cv = $('gcanvas'); if(cv && S && curQ().kind === 'graph') drawBoard(cv, curQ(), {pts:pts, answer:false}); }
+function bindGraph(){
+  var cv = $('gcanvas'); if(!cv) return;
+  function toGrid(e){
+    var r = cv.getBoundingClientRect(), L = 11;
+    var x = Math.round(((e.clientX - r.left)/r.width)*2*L - L), y = Math.round(L - ((e.clientY - r.top)/r.height)*2*L);
+    return [Math.max(-10, Math.min(10, x)), Math.max(-10, Math.min(10, y))];
+  }
+  function touched(){ cv.classList.remove('ok','bad','missing'); redrawInput(); }
+  cv.addEventListener('click', function(e){
+    if(S.phase !== 'ask') return;
+    var g = toGrid(e);
+    if(pts.length >= 4){ say('You already have 4 points. Use Undo point or Clear graph to change them.', 'info'); renderControls(); return; }
+    if(pts.length % 2 === 1 && pts[pts.length-1][0] === g[0] && pts[pts.length-1][1] === g[1]) return;
+    pts.push(g); touched();
+  });
+  cv.addEventListener('pointermove', function(e){ $('gcoord').textContent = pairText(toGrid(e)); });
+  cv.addEventListener('pointerleave', function(){ $('gcoord').textContent = ''; });
+  $('gundo').onclick = function(){ if(S.phase === 'ask'){ pts.pop(); touched(); } };
+  $('gclear').onclick = function(){ if(S.phase === 'ask'){ pts = []; touched(); } };
+  requestAnimationFrame(redrawInput);
+}
+window.addEventListener('resize', function(){
+  if($('vWork').hidden) return;
+  redrawInput();
+  if(S && S.h >= 3 && curQ().lines) drawBoard($('hcanvas'), curQ(), {answer:true});
+});
+
+/* ---------- checking ---------- */
+function evaluate(q){
+  var marks = {}, blank = false;
+  function fld(n){ return $('qBody').querySelector('[data-f="' + n + '"]'); }
+  function need(n, test){ var el = fld(n); if(!el.value.trim()){ blank = true; marks[n] = null; } else marks[n] = !!test(el.value); }
+  if(q.kind === 'two'){
+    q.pts.forEach(function(p, k){ q.eqs.forEach(function(e, i){ need('v' + k + i, function(v){ return near(v, e.a*p[0] + e.b*p[1]); }); }); });
+    var val = q.pts.map(function(p){ return q.eqs.every(function(e){ return sat(p, e); }); });
+    var exp = val[0] && val[1] ? 'both' : val[0] ? 'A' : val[1] ? 'B' : 'none';
+    need('final', function(v){ return v === exp; });
+  } else if(q.kind === 'one'){
+    q.eqs.forEach(function(e, i){ need('v' + i, function(v){ return near(v, e.a*q.pt[0] + e.b*q.pt[1]); }); });
+    var truth = q.eqs.every(function(e){ return sat(q.pt, e); }) ? 'yes' : 'no';
+    need('final', function(v){ return v === truth; });
+  } else {
+    if(q.kind === 'graph'){
+      q.lines.forEach(function(Ln, i){
+        need('m' + i, function(v){ return near(v, Ln.m, 0.006); });
+        need('b' + i, function(v){ return near(v, Ln.b, 0.006); });
+      });
+      if(pts.length < 4){ blank = true; marks.graph = null; }
+      else {
+        var ls = [lineFrom(pts[0], pts[1]), lineFrom(pts[2], pts[3])];
+        var same = function(a, t){ return a && Math.abs(a.m - t.m) < 1e-6 && Math.abs(a.b - t.b) < 1e-6; };
+        var uniq = q.lines.filter(function(t, i, arr){ return arr.findIndex(function(u){ return same(u, t); }) === i; });
+        var idx = ls.map(function(a){ return uniq.findIndex(function(t){ return same(a, t); }); });
+        marks.graph = idx.every(function(i){ return i >= 0; }) && uniq.every(function(t, i){ return idx.indexOf(i) >= 0; });
+      }
+    }
+    need('type', function(v){ return v === q.type; });
+    if(fld('type').value === 'one') need('sol', function(v){ return q.type === 'one' && norm(v) === q.sol[0] + ',' + q.sol[1]; });
+  }
+  Object.keys(marks).forEach(function(n){
+    var el = n === 'graph' ? $('gcanvas') : fld(n); if(!el) return;
+    el.classList.remove('ok','bad','missing');
+    if(marks[n] === null) el.classList.add('missing');
+    else if(!blank) el.classList.add(marks[n] ? 'ok' : 'bad');
+  });
+  return {blank:blank, ok:!blank && Object.keys(marks).every(function(n){ return marks[n] === true; })};
+}
+$('checkBtn').onclick = function(){
+  if(S.phase !== 'ask') return;
+  var q = curQ(), r = rec(), res = evaluate(q);
+  if(res.blank){
+    say(q.kind === 'graph' ? 'Finish the boxes outlined with dashes first. The graph needs 2 points for each line.' : 'Fill in the boxes outlined with dashes first.', 'info');
+    renderControls(); return;
+  }
+  if(res.ok){
+    S.phase = 'done';
+    if(!S.sim){
+      r.solved = true;
+      say(r.h >= HELP_LIMIT ? 'Correct! You used a lot of help on this one, so try a similar problem on your own before moving on.' : (r.w ? 'Correct! Nice job fixing your work.' : 'Correct on the first try!'), 'good');
+    } else if(S.h < HELP_LIMIT){
+      r.sok = true; say('Correct! You solved the similar problem on your own.', 'good');
+    } else {
+      say(r.sc < MAX_SIMILAR ? 'Correct, but with a lot of help. Try one more similar problem.' : 'Correct. Time to move on. Your teacher will see that this one needed extra help.', 'good');
+    }
+    if(q.kind === 'graph') drawBoard($('gcanvas'), q, {pts:pts, answer:false});
+  } else {
+    var tries;
+    if(S.sim){ r.sw++; } else { r.w++; }
+    tries = (S.sim ? null : r.w);
+    say('Not quite. Look again at the boxes outlined in red.' + ((tries === null || tries >= 2) && S.h < 3 ? ' Press Help if you are stuck.' : ''), 'warn');
+  }
+  persist(); renderControls(); renderStrip();
+};
+$('qBody').addEventListener('input', function(e){ if(e.target.classList) e.target.classList.remove('ok','bad','missing'); });
+$('qBody').addEventListener('change', function(e){ if(e.target.classList) e.target.classList.remove('ok','bad','missing'); });
+$('qBody').addEventListener('keydown', function(e){ if(e.key === 'Enter' && e.target.tagName === 'INPUT') $('checkBtn').click(); });
+
+$('nextBtn').onclick = function(){
+  if(S.phase !== 'done') return;
+  var step = nextStep(), r = rec();
+  if(step === 'similar'){
+    r.sc++;
+    var seed, v = null;
+    for(var t = 0; t < 10 && !v; t++){ seed = Math.floor(Math.random()*1e9) + 1; v = variantFor(S.i + 1, seed); }
+    S.sim = seed;
+  } else {
+    S.i++; S.sim = null;
+    if(S.i >= P.length){ S.i = P.length - 1; S.finishedAt = Date.now(); S.phase = 'finished'; persist(); renderDone(); show('vDone'); window.scrollTo(0, 0); return; }
+  }
+  S.h = 0; S.phase = 'ask'; S.msg = null; pts = [];
+  persist(); renderItem(); $('qSheet').scrollIntoView({block:'start', behavior:'smooth'});
+};
+
+/* ---------- teacher code ---------- */
+function pushBits(arr, v, n){ for(var k = n - 1; k >= 0; k--) arr.push((v >>> k) & 1); }
+function readBits(arr, pos, n){ var v = 0; for(var k = 0; k < n; k++) v = v*2 + arr[pos + k]; return v; }
+var CODE_BITS = 250, BODY_BITS = 224;
+function makeCode(st){
+  var b = [], nm = normName(st.name);
+  pushBits(b, 1, 3);
+  pushBits(b, Math.min(15, st.attempt || 1), 4);
+  pushBits(b, Math.min(255, Math.max(0, Math.round((st.finishedAt - st.startedAt)/60000))), 8);
+  pushBits(b, 1, 1);
+  st.rec.forEach(function(r){
+    pushBits(b, Math.min(15, r.w), 4); pushBits(b, r.h, 2); pushBits(b, r.solved ? 1 : 0, 1);
+    pushBits(b, Math.min(3, r.sc), 2); pushBits(b, Math.min(15, r.sw), 4); pushBits(b, r.sok ? 1 : 0, 1); pushBits(b, r.sh, 2);
+  });
+  pushBits(b, hash(SALT + '|' + nm + '|' + b.join('')) % 67108864, 26);
+  var ks = prng(hash(SALT + '#' + nm));
+  for(var i = 0; i < b.length; i++) b[i] ^= (ks() < 0.5 ? 1 : 0);
+  var s = '';
+  for(i = 0; i < CODE_BITS; i += 5) s += ALPH[readBits(b, i, 5)];
+  return s.match(/.{5}/g).join('-');
+}
+function readCode(name, code){
+  var nm = normName(name);
+  if(nm.length < 2) return {err:'Type the student’s name.'};
+  var c = String(code).toUpperCase().replace(/O/g, '0').replace(/[IL]/g, '1').replace(/[^0-9A-Z]/g, '');
+  if(c.length !== CODE_BITS/5) return {err:'That code is not the right length. It should be 50 letters and numbers.'};
+  var b = [];
+  for(var i = 0; i < c.length; i++){ var v = ALPH.indexOf(c[i]); if(v < 0) return {err:'That code has a letter that never appears in codes (' + c[i] + ').'}; pushBits(b, v, 5); }
+  var ks = prng(hash(SALT + '#' + nm));
+  for(i = 0; i < b.length; i++) b[i] ^= (ks() < 0.5 ? 1 : 0);
+  var body = b.slice(0, BODY_BITS);
+  if(readBits(b, BODY_BITS, 26) !== hash(SALT + '|' + nm + '|' + body.join('')) % 67108864 || readBits(b, 0, 3) !== 1)
+    return {err:'This code does not match that name. Check the spelling of the name, or the code was typed wrong.'};
+  var out = {attempt:readBits(b, 3, 4), minutes:readBits(b, 7, 8), rec:[]}, pos = 16;
+  for(i = 0; i < P.length; i++){
+    out.rec.push({w:readBits(b, pos, 4), h:readBits(b, pos + 4, 2), solved:!!readBits(b, pos + 6, 1), sc:readBits(b, pos + 7, 2),
+                  sw:readBits(b, pos + 9, 4), sok:!!readBits(b, pos + 13, 1), sh:readBits(b, pos + 14, 2)});
+    pos += 16;
+  }
+  return out;
+}
+function outcome(r){
+  if(r.solved && r.h < HELP_LIMIT) return 'own';
+  if(r.sok) return 'rec';
+  return 'need';
+}
+var OUT_LABEL = {own:'On own', rec:'After help, then passed a similar problem', need:'Still needs work'};
+var HELP_LABEL = ['None', 'Hint', 'More help', 'Full solution'];
+function summarize(rs){
+  var s = {own:0, rec:0, need:0, wrong:0, helped:0, needList:[]};
+  rs.forEach(function(r, i){ var o = outcome(r); s[o]++; if(o === 'need') s.needList.push(i + 1); s.wrong += r.w + r.sw; if(r.h || r.sh) s.helped++; });
+  return s;
+}
+
+/* ---------- finished ---------- */
+function renderDone(){
+  renderStrip();
+  var s = summarize(S.rec);
+  $('doneTitle').textContent = 'Nice work, ' + S.name.split(' ')[0] + '. Worksheet complete.';
+  var stats = $('doneStats'); stats.innerHTML = '';
+  [[s.own + ' / 13', 'solved on your own'], [s.rec, 'solved after help and a similar problem'], [s.wrong, 'wrong tries in all'], [s.helped, 'problems where you used help']].forEach(function(x){
+    var d = document.createElement('div'); d.className = 'stat'; d.innerHTML = '<b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span>'; stats.appendChild(d);
+  });
+  $('codeFor').textContent = 'Turn in this code together with your name, spelled exactly as: ' + S.name;
+  $('codeOut').textContent = makeCode(S);
+  $('copyMsg').textContent = ''; $('copyFallback').hidden = true;
+}
+$('copyBtn').onclick = function(){
+  var text = 'Name: ' + S.name + '\n3-1 Practice code: ' + $('codeOut').textContent;
+  function fallback(){ var ta = $('copyFallback'); ta.hidden = false; ta.value = text; ta.focus(); ta.select(); $('copyMsg').textContent = 'Select the text below and copy it.'; }
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function(){ $('copyMsg').textContent = 'Copied your name and code.'; }, fallback);
+    else fallback();
+  }catch(e){ fallback(); }
+};
+function armButton(btn, idleText, armedText, action){
+  if(btn.dataset.armed === '1'){ btn.dataset.armed = '0'; btn.classList.remove('armed'); btn.textContent = idleText; action(); return; }
+  btn.dataset.armed = '1'; btn.classList.add('armed'); btn.textContent = armedText;
+  setTimeout(function(){ if(btn.dataset.armed === '1'){ btn.dataset.armed = '0'; btn.classList.remove('armed'); btn.textContent = idleText; } }, 4000);
+}
+$('restartBtn').onclick = function(){
+  armButton($('restartBtn'), 'Restart worksheet', 'Click again to erase your work', function(){
+    var name = S ? S.name : '';
+    S = null; pts = [];
+    try{ localStorage.removeItem(STORE); }catch(e){}
+    $('nameIn').value = name; $('startMsg').textContent = '';
+    show('vStart'); window.scrollTo(0, 0);
+  });
+};
+
+/* ---------- teacher view ---------- */
+function el(tag, cls, text){ var e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; }
+function table(heads, rows){
+  var wrap = el('div', 'tablewrap'), t = el('table', 'rt'), tr = el('tr'), tb = el('tbody'), th = el('thead');
+  heads.forEach(function(h){ tr.appendChild(el('th', null, h)); }); th.appendChild(tr); t.appendChild(th);
+  rows.forEach(function(r){ var row = el('tr'); r.forEach(function(c){ var td = el('td'); if(c && c.nodeType) td.appendChild(c); else td.textContent = String(c); row.appendChild(td); }); tb.appendChild(row); });
+  t.appendChild(tb); wrap.appendChild(t); return wrap;
+}
+function pill(o){ return el('span', 'pill ' + o, OUT_LABEL[o]); }
+function detailTable(d){
+  return table(['Problem', 'Result', 'Wrong tries', 'Help used', 'Similar problems'], d.rec.map(function(r, i){
+    var res = r.solved ? (r.h >= HELP_LIMIT ? 'Correct, with a lot of help' : (r.w ? 'Correct after ' + r.w + ' wrong ' + (r.w === 1 ? 'try' : 'tries') : 'Correct on first try')) : 'Viewed the full solution';
+    var sim = r.sc ? r.sc + ' tried · ' + r.sw + ' wrong · help: ' + HELP_LABEL[r.sh] + ' · ' + (r.sok ? 'passed one on own' : 'did not pass one on own') : '—';
+    var cell = el('div', 'stack'); cell.style.gap = '4px'; cell.appendChild(pill(outcome(r))); cell.appendChild(el('span', 'small muted', res));
+    return ['#' + (i + 1), cell, r.w, HELP_LABEL[r.h], sim];
+  }));
+}
+function studentReport(name, d){
+  var box = el('div', 'report'), s = summarize(d.rec);
+  box.appendChild(el('h3', null, name));
+  var stats = el('div', 'stats');
+  [[s.own + ' / 13', 'solved on own'], [s.rec, 'passed a similar problem after help'], [s.need, 'still need work' + (s.needList.length ? ' (#' + s.needList.join(', #') + ')' : '')],
+   [s.wrong, 'wrong tries in all'], [d.minutes + (d.minutes >= 255 ? '+' : '') + ' min', 'time spent'], [d.attempt + (d.attempt >= 15 ? '+' : ''), 'attempt number on that device']].forEach(function(x){
+    var c = el('div', 'stat'); c.appendChild(el('b', null, x[0])); c.appendChild(el('span', null, x[1])); stats.appendChild(c);
+  });
+  box.appendChild(stats); box.appendChild(detailTable(d));
+  return box;
+}
+$('tCheck').onclick = function(){
+  var out = $('tOut'); out.textContent = '';
+  var name = $('tName').value.trim(), d = readCode(name, $('tCode').value);
+  if(d.err){ out.appendChild(el('p', 'msg warn', d.err)); return; }
+  out.appendChild(studentReport(name, d));
+};
+$('tBatchBtn').onclick = function(){
+  var out = $('tOut'); out.textContent = '';
+  var lines = $('tBatch').value.split(/\r?\n/).map(function(l){ return l.trim(); }).filter(Boolean), rows = [], good = [];
+  lines.forEach(function(line){
+    var m = /([0-9A-Za-z]{5}(?:[-\s][0-9A-Za-z]{5}){9}|[0-9A-Za-z]{50})/.exec(line);
+    var name = m ? line.replace(m[0], '').replace(/^[\s,;\t]+|[\s,;\t]+$/g, '').replace(/^name:\s*/i, '').replace(/3-1 practice code:\s*$/i, '').trim() : line;
+    var d = m ? readCode(name, m[0]) : {err:'No code found on this line.'};
+    if(d.err){ rows.push([name || '(no name)', el('span', 'pill invalid', 'Code problem'), d.err, '', '', '']); return; }
+    var s = summarize(d.rec);
+    rows.push([name, el('span', 'pill own', s.own + ' / 13 on own'), s.rec, s.needList.length ? '#' + s.needList.join(', #') : 'None', s.wrong, d.minutes + ' min']);
+    good.push([name, d]);
+  });
+  if(!rows.length){ out.appendChild(el('p', 'msg warn', 'Paste at least one line with a name and a code.')); return; }
+  out.appendChild(el('h3', null, 'Class summary · ' + rows.length + ' student' + (rows.length === 1 ? '' : 's')));
+  out.appendChild(table(['Name', 'Solved on own', 'Passed after help', 'Still needs work', 'Wrong tries', 'Time'], rows));
+  good.forEach(function(g){
+    var det = el('details'), sum = el('summary', null, 'Details for ' + g[0]);
+    det.appendChild(sum); det.appendChild(studentReport(g[0], g[1])); out.appendChild(det);
+  });
+};
+$('tBack').onclick = function(){ if(location.hash) location.hash = ''; route(); };
+window.addEventListener('hashchange', route);
+
+/* ---------- boot ---------- */
+var saved = load(STORE);
+if(saved && saved.name && Array.isArray(saved.rec) && saved.rec.length === P.length){ S = saved; }
+if(S && S.sim && !variantFor(S.i + 1, S.sim)){ S.sim = null; }
+route();
+})();
+</script>
+</body>
+</html>
